@@ -17,7 +17,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { sourceLabel } from "@/lib/utils";
 import type { JobSource } from "../../../shared/types";
-import { defaultSortDirection, sortLabels, tabs } from "./constants";
+import { defaultSortDirection, orderedFilterSources, sortLabels, tabs } from "./constants";
 import type { FilterTab, JobSort } from "./constants";
 
 interface OrchestratorFiltersProps {
@@ -28,6 +28,7 @@ interface OrchestratorFiltersProps {
   onSearchQueryChange: (value: string) => void;
   sourceFilter: JobSource | "all";
   onSourceFilterChange: (value: JobSource | "all") => void;
+  sourcesWithJobs: JobSource[];
   sort: JobSort;
   onSortChange: (sort: JobSort) => void;
 }
@@ -40,9 +41,13 @@ export const OrchestratorFilters: React.FC<OrchestratorFiltersProps> = ({
   onSearchQueryChange,
   sourceFilter,
   onSourceFilterChange,
+  sourcesWithJobs,
   sort,
   onSortChange,
-}) => (
+}) => {
+  const visibleSources = orderedFilterSources.filter((source) => sourcesWithJobs.includes(source));
+
+  return (
   <Tabs value={activeTab} onValueChange={(value) => onTabChange(value as FilterTab)}>
     <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
       <TabsList className="h-auto w-full flex-wrap justify-start gap-1 lg:w-auto">
@@ -85,9 +90,9 @@ export const OrchestratorFilters: React.FC<OrchestratorFiltersProps> = ({
               onValueChange={(value) => onSourceFilterChange(value as JobSource | "all")}
             >
               <DropdownMenuRadioItem value="all">All Sources</DropdownMenuRadioItem>
-              {(Object.keys(sourceLabel) as JobSource[]).map((key) => (
-                <DropdownMenuRadioItem key={key} value={key}>
-                  {sourceLabel[key]}
+              {visibleSources.map((source) => (
+                <DropdownMenuRadioItem key={source} value={source}>
+                  {sourceLabel[source]}
                 </DropdownMenuRadioItem>
               ))}
             </DropdownMenuRadioGroup>
@@ -140,3 +145,4 @@ export const OrchestratorFilters: React.FC<OrchestratorFiltersProps> = ({
     </div>
   </Tabs>
 );
+};
