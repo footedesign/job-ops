@@ -30,6 +30,7 @@ export interface RunStartupJobsOptions {
   searchTerms?: string[];
   selectedCountry?: string;
   locations?: string[];
+  workplaceTypes?: Array<"remote" | "hybrid" | "onsite">;
   maxJobsPerTerm?: number;
   onProgress?: (event: StartupJobsProgressEvent) => void;
   shouldCancel?: () => boolean;
@@ -149,6 +150,7 @@ export async function runStartupJobs(
           requestedCount: maxJobsPerTerm,
           enrichDetails: true,
           location: location ?? undefined,
+          workplaceType: options.workplaceTypes,
         });
 
         let jobsFoundTerm = 0;
